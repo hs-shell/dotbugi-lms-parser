@@ -69,6 +69,7 @@ jobs:
       - name: 테스트
         run: npm test
 
-      # 공개 저장소 + 공개 패키지 → provenance 자동 첨부
-      - name: npm 배포
-        run: npm publish
+      # Trusted Publisher가 stage 전용이라 대기 상태로만 올린다 — 소유자가 2FA로 승인해야 공개된다
+      # (공개 저장소 + 공개 패키지 → provenance 자동 첨부)
+      - name: npm 배포 (스테이징)
+        run: npm stage publish

@@ -94,3 +94,12 @@ npm run format
 ## 라이선스
 
 Apache-2.0
+
+## 배포
+
+Release PR을 머지하면 CI가 npm Trusted Publishing(OIDC)으로 **스테이징 배포**한다. 공개하려면 패키지 소유자가 2단계 인증으로 승인한다.
+
+```bash
+npm stage list @dotbugi/lms-parser
+npm stage approve <stage-id>
+```
