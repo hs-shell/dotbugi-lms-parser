@@ -53,13 +53,15 @@ jobs:
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
 
-      # Trusted Publishing은 npm CLI 11.5.1 이상 필요
+      # Trusted Publishing은 npm CLI 11.5.1 이상 필요 — OIDC 권한이 있는 잡이라 정확한 버전으로 고정
       - name: npm CLI 업데이트
-        run: npm install -g npm@11 && npm -v
+        run: npm install -g npm@11.21.1 && npm -v
 
+      # OIDC 토큰이 있는 잡에서 라이프사이클 스크립트(husky 등)를 실행하지 않는다
       - name: 의존성 설치
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: 빌드
         run: npm run build

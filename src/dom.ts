@@ -12,5 +12,11 @@ export function getText(parent: ParentNode, selector: string): string | null {
  */
 export function getHref(parent: ParentNode, selector: string): string | null {
   const href = parent.querySelector(selector)?.getAttribute('href');
-  return href ? (URL.parse(href, BASE_LINK)?.href ?? null) : null;
+  if (!href) return null;
+  // URL.parse는 Chrome 126·Node 22.1부터라 생성자 + try/catch로 호환 범위를 넓힌다
+  try {
+    return new URL(href, BASE_LINK).href;
+  } catch {
+    return null;
+  }
 }
