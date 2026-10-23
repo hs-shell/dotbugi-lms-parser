@@ -1,6 +1,5 @@
-import { getText } from './dom.js';
+import { getHref, getText } from './dom.js';
 import type { FetchHtml } from './types.js';
-import { BASE_LINK } from './links.js';
 import { normalizeLmsDate } from './lmsKeywords.js';
 import { isCurrentDateByDate } from './dateUtils.js';
 
@@ -11,15 +10,6 @@ const COL = {
   TITLE_LINK: '.cell.c1 a',
   DUE_DATE: '.cell.c2',
 } as const;
-
-/**
- * 상대/절대 경로를 퀴즈 모듈 절대 URL로 변환
- * view.php?id=123 → https://learn.hansung.ac.kr/mod/quiz/view.php?id=123
- */
-function toQuizUrl(rawHref: string): string {
-  if (rawHref.startsWith('http')) return rawHref;
-  return `${BASE_LINK}/mod/quiz/${rawHref}`;
-}
 
 /**
  * 퀴즈 상세 페이지에서 제출 여부를 확인
@@ -67,10 +57,10 @@ export const fetchQuiz = async (
       const dueDate = rawDueDate && rawDueDate !== '-' ? (normalizeLmsDate(rawDueDate) ?? null) : null;
 
       const title = titleLink.textContent?.trim();
-      const rawHref = titleLink.getAttribute('href');
-      if (!title || !rawHref) return [];
+      const url = getHref(row, COL.TITLE_LINK, link);
+      if (!title || !url) return [];
 
-      return { title, subject: lastWeekLabel, url: toQuizUrl(rawHref), dueDate };
+      return { title, subject: lastWeekLabel, url, dueDate };
     });
 
     // 마감 전 퀴즈만 상세 페이지 fetch, 마감된 퀴즈는 캐시 사용
