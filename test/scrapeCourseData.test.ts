@@ -34,7 +34,7 @@ const PAGES: Record<string, string> = {
     <table class="generaltable"><tbody>
       <tr><td class="cell c0">1주차</td><td class="cell c1"><a href="/mod/assign/view.php?id=5">과제1</a></td>
         <td class="cell c2">2024-03-10 23:59</td><td class="cell c3">미제출</td></tr>
-      <tr><td class="cell c0"></td><td class="cell c1"><a href="/mod/assign/view.php?id=6">과제2</a></td>
+      <tr><td class="cell c0"></td><td class="cell c1"><a href="view.php?id=6">과제2</a></td>
         <td class="cell c2">-</td><td class="cell c3">제출 완료</td></tr>
     </tbody></table>`,
   [getQuizPageLink(COURSE_ID)]: `
