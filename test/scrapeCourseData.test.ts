@@ -106,6 +106,9 @@ describe('scrapeCourseData (fetchHtml 주입)', () => {
       return fakeFetchHtml(url);
     };
 
+    // 출석부 실패도 cause 가 있는 Error 로 오므로 퀴즈 URL 이 담긴 오류로 특정한다
+    const quizError = expect.objectContaining({ message: expect.stringContaining(QUIZ_URL) });
+
     it('onError로 알리고 캐시된 제출 상태를 유지', async () => {
       const onError = vi.fn();
       const data = await scrapeCourseData(quizDetailFails, COURSE_ID, {
@@ -114,7 +117,7 @@ describe('scrapeCourseData (fetchHtml 주입)', () => {
       });
 
       expect(data.quizDataArray).toEqual([expect.objectContaining({ url: QUIZ_URL, isSubmit: true })]);
-      expect(onError).toHaveBeenCalledWith(expect.objectContaining({ cause: expect.any(Error) }));
+      expect(onError).toHaveBeenCalledWith(quizError);
       expect(onError).toHaveBeenCalledTimes(2); // 출석부(_a.php) 실패 + 퀴즈 상세 실패
     });
 
@@ -123,6 +126,7 @@ describe('scrapeCourseData (fetchHtml 주입)', () => {
       const data = await scrapeCourseData(quizDetailFails, COURSE_ID, { onError });
 
       expect(data.quizDataArray).toEqual([expect.objectContaining({ url: QUIZ_URL, isSubmit: false })]);
+      expect(onError).toHaveBeenCalledWith(quizError);
       expect(onError).toHaveBeenCalledTimes(2);
     });
   });
