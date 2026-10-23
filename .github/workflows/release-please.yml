@@ -32,6 +32,9 @@ jobs:
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          # owner/repositories 미지정 → 이 저장소로만 한정. 권한도 release-please 에 필요한 것만
+          permission-contents: write
+          permission-pull-requests: write
 
       - name: Release Please
         id: rp
