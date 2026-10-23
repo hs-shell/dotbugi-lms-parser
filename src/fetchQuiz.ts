@@ -26,13 +26,9 @@ function toQuizUrl(rawHref: string): string {
  * quizattemptsummary 테이블에 행이 있으면 제출된 것으로 판단
  */
 async function fetchQuizSubmitStatus(fetchHtml: FetchHtml, quizUrl: string): Promise<boolean> {
-  try {
-    const doc = await fetchHtml(quizUrl);
-    const rows = doc.querySelectorAll('table.quizattemptsummary tbody tr');
-    return rows.length > 0;
-  } catch {
-    return false;
-  }
+  const doc = await fetchHtml(quizUrl);
+  const rows = doc.querySelectorAll('table.quizattemptsummary tbody tr');
+  return rows.length > 0;
 }
 
 type QuizItem = {
@@ -47,8 +43,14 @@ type QuizItem = {
  * 퀴즈 목록 + 제출 여부 조회
  * @param cachedSubmitMap 이전에 저장된 퀴즈별 제출 상태 (key: url)
  *   마감된 퀴즈는 상세 페이지를 다시 fetch하지 않고 캐시된 값을 사용
+ * @param onError 퀴즈 상세(제출 여부) 요청 실패 시 호출
  */
-export const fetchQuiz = async (fetchHtml: FetchHtml, link: string, cachedSubmitMap?: Map<string, boolean>) => {
+export const fetchQuiz = async (
+  fetchHtml: FetchHtml,
+  link: string,
+  cachedSubmitMap?: Map<string, boolean>,
+  onError?: (reason: unknown) => void
+) => {
   try {
     const doc = await fetchHtml(link);
     const rows = doc.querySelectorAll('table.generaltable tbody tr');
@@ -80,8 +82,14 @@ export const fetchQuiz = async (fetchHtml: FetchHtml, link: string, cachedSubmit
           return { ...item, isSubmit: cachedSubmitMap.get(item.url)! };
         }
 
-        const isSubmit = await fetchQuizSubmitStatus(fetchHtml, item.url);
-        return { ...item, isSubmit };
+        try {
+          const isSubmit = await fetchQuizSubmitStatus(fetchHtml, item.url);
+          return { ...item, isSubmit };
+        } catch (error) {
+          onError?.(new Error(`퀴즈 제출 여부 조회 실패: ${item.url}`, { cause: error }));
+          // isSubmit이 boolean이라 '알 수 없음'을 표현할 수 없어, 실패를 미제출로 덮어쓰지 않도록 캐시 값을 우선
+          return { ...item, isSubmit: cachedSubmitMap?.get(item.url) ?? false };
+        }
       })
     );
 

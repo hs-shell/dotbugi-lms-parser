@@ -44,7 +44,7 @@ export const scrapeCourseData = async (
     fetchVodProgress(fetchHtml, progressLink),
     fetchVodList(fetchHtml, getIndexPageLink(courseId)),
     fetchAssign(fetchHtml, getAssignPageLink(courseId)),
-    fetchQuiz(fetchHtml, getQuizPageLink(courseId), cachedSubmitMap),
+    fetchQuiz(fetchHtml, getQuizPageLink(courseId), cachedSubmitMap, onError),
   ]);
 
   const vodAttendanceRaw = settled(results[0], null);

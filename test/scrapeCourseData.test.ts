@@ -100,6 +100,33 @@ describe('scrapeCourseData (fetchHtml 주입)', () => {
     expect(PAGES[getVodPageLink(COURSE_ID)]).toBeUndefined();
   });
 
+  describe('퀴즈 상세 요청 실패', () => {
+    const quizDetailFails: FetchHtml = async (url) => {
+      if (url === QUIZ_URL) throw new Error('퀴즈 상세 실패');
+      return fakeFetchHtml(url);
+    };
+
+    it('onError로 알리고 캐시된 제출 상태를 유지', async () => {
+      const onError = vi.fn();
+      const data = await scrapeCourseData(quizDetailFails, COURSE_ID, {
+        onError,
+        cachedQuizzes: [{ url: QUIZ_URL, isSubmit: true }],
+      });
+
+      expect(data.quizDataArray).toEqual([expect.objectContaining({ url: QUIZ_URL, isSubmit: true })]);
+      expect(onError).toHaveBeenCalledWith(expect.objectContaining({ cause: expect.any(Error) }));
+      expect(onError).toHaveBeenCalledTimes(2); // 출석부(_a.php) 실패 + 퀴즈 상세 실패
+    });
+
+    it('캐시가 없으면 미제출(false)로 두되 onError로 알림', async () => {
+      const onError = vi.fn();
+      const data = await scrapeCourseData(quizDetailFails, COURSE_ID, { onError });
+
+      expect(data.quizDataArray).toEqual([expect.objectContaining({ url: QUIZ_URL, isSubmit: false })]);
+      expect(onError).toHaveBeenCalledTimes(2);
+    });
+  });
+
   it('모든 요청이 실패하면 에러', async () => {
     const failing: FetchHtml = async () => {
       throw new Error('네트워크 오류');
