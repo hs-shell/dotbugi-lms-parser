@@ -1,0 +1,63 @@
+{
+  "name": "@dotbugi/lms-parser",
+  "version": "0.0.0",
+  "description": "한성대학교 LMS(learn.hansung.ac.kr) HTML 파서 — 브라우저·Node 공용",
+  "license": "Apache-2.0",
+  "author": "6-keem",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hs-shell/dotbugi-lms-parser.git"
+  },
+  "bugs": "https://github.com/hs-shell/dotbugi-lms-parser/issues",
+  "homepage": "https://github.com/hs-shell/dotbugi-lms-parser#readme",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc && tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.5.3",
+    "@commitlint/config-conventional": "^20.5.3",
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "globals": "^15.15.0",
+    "husky": "^9.1.7",
+    "jsdom": "^25.0.1",
+    "linkedom": "^0.18.14",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.9.10",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "^8.72.0",
+    "vitest": "^4.1.12"
+  }
+}
