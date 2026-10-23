@@ -24,7 +24,7 @@ export const fetchAssign = async (fetchHtml: FetchHtml, link: string) => {
       if (weekLabel) lastWeekLabel = weekLabel;
 
       const title = getText(row, COL.TITLE_LINK);
-      const url = getHref(row, COL.TITLE_LINK);
+      const url = getHref(row, COL.TITLE_LINK, link);
       const rawDueDate = getText(row, COL.DUE_DATE)?.trim();
       if (!title || !url) return [];
       const dueDate = rawDueDate && rawDueDate !== '-' ? (normalizeLmsDate(rawDueDate) ?? null) : null;

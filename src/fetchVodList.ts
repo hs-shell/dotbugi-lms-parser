@@ -27,7 +27,7 @@ export const fetchVodList = async (fetchHtml: FetchHtml, link: string) => {
 
       return Array.from(vodActivities).flatMap((activity) => {
         const title = parseVodTitle(activity);
-        const url = getHref(activity, 'a');
+        const url = getHref(activity, 'a', link);
         const rawRange = getText(activity, '.text-ubstrap');
         if (!title || !url || !rawRange) return [];
         const range = normalizeLmsRange(rawRange)!;

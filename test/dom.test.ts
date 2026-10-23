@@ -70,4 +70,28 @@ describe('getHref', () => {
     const parent = el('<a class="link" href="/path/to/page">Link</a>');
     expect(getHref(parent, '.link')).toBe('https://learn.hansung.ac.kr/path/to/page');
   });
+
+  describe('요청한 페이지 URL 기준 절대화', () => {
+    const pageUrl = 'https://learn.hansung.ac.kr/mod/assign/index.php?id=1';
+
+    it('경로 상대 링크는 페이지 디렉터리 기준', () => {
+      const parent = el('<a class="link" href="view.php?id=5">Link</a>');
+      expect(getHref(parent, '.link', pageUrl)).toBe('https://learn.hansung.ac.kr/mod/assign/view.php?id=5');
+    });
+
+    it('루트 상대 링크는 사이트 루트 기준', () => {
+      const parent = el('<a class="link" href="/course/view.php?id=7">Link</a>');
+      expect(getHref(parent, '.link', pageUrl)).toBe('https://learn.hansung.ac.kr/course/view.php?id=7');
+    });
+
+    it('절대 LMS 링크는 그대로', () => {
+      const parent = el('<a class="link" href="https://learn.hansung.ac.kr/mod/vod/view.php?id=9">Link</a>');
+      expect(getHref(parent, '.link', pageUrl)).toBe('https://learn.hansung.ac.kr/mod/vod/view.php?id=9');
+    });
+
+    it('빈 href는 null', () => {
+      const parent = el('<a class="link" href="">Link</a>');
+      expect(getHref(parent, '.link', pageUrl)).toBeNull();
+    });
+  });
 });
