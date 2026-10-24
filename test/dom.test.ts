@@ -46,9 +46,8 @@ describe('getText', () => {
 
 describe('getHref', () => {
   it('a 태그의 href 추출', () => {
-    const parent = el('<a class="link" href="https://example.com">Link</a>');
-    const result = getHref(parent, '.link');
-    expect(result).toContain('example.com');
+    const parent = el('<a class="link" href="https://learn.hansung.ac.kr/course/view.php?id=1">Link</a>');
+    expect(getHref(parent, '.link')).toBe('https://learn.hansung.ac.kr/course/view.php?id=1');
   });
 
   it('셀렉터가 매칭 안 되면 null', () => {
@@ -92,6 +91,20 @@ describe('getHref', () => {
     it('빈 href는 null', () => {
       const parent = el('<a class="link" href="">Link</a>');
       expect(getHref(parent, '.link', pageUrl)).toBeNull();
+    });
+  });
+
+  describe('LMS 출처가 아니면 null', () => {
+    it.each([
+      'https://evil.com/mod/quiz/view.php?id=1',
+      'https://learn.hansung.ac.kr.evil.com/',
+      'http://learn.hansung.ac.kr/mod/quiz/view.php?id=1',
+      '//evil.com/path',
+      'javascript:alert(1)',
+      'data:text/html,<script>alert(1)</script>',
+    ])('%s', (href) => {
+      const parent = el(`<a class="link" href="${href}">Link</a>`);
+      expect(getHref(parent, '.link')).toBeNull();
     });
   });
 });
