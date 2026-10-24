@@ -50,8 +50,11 @@ import { BASE_LINK, parseCoursesFromDOM, scrapeCourseData, type FetchHtml } from
 const moodleSession = process.env.MOODLE_SESSION!;
 
 const fetchHtml: FetchHtml = async (url) => {
-  const res = await fetch(url, { headers: { Cookie: `MoodleSession=${moodleSession}` } });
-  if (!res.ok) throw new Error(`HTTP ${res.status}: ${url}`);
+  // 세션 쿠키가 LMS 밖(파싱된 외부 링크·리다이렉트)으로 새지 않도록 호스트를 고정한다
+  const target = new URL(url, BASE_LINK);
+  if (target.origin !== 'https://learn.hansung.ac.kr') throw new Error('LMS 외부 URL 요청 거부');
+  const res = await fetch(target, { headers: { Cookie: `MoodleSession=${moodleSession}` }, redirect: 'manual' });
+  if (!res.ok) throw new Error(`HTTP ${res.status}: ${target}`);
   return new DOMParser().parseFromString(await res.text(), 'text/html') as unknown as Document;
 };
 
@@ -64,7 +67,7 @@ for (const course of courses) {
 ```
 
 - 타입 선언이 DOM 타입(`Document`)을 쓰므로 TypeScript 프로젝트는 `tsconfig`의 `lib`에 `"DOM"`을 추가하세요.
-- 세션이 만료되면 LMS가 로그인 페이지로 리다이렉트하므로 결과가 빈 배열로 나올 수 있습니다.
+- 세션이 만료되면 LMS가 로그인 페이지로 리다이렉트하는데, `redirect: 'manual'` 이므로 3xx 응답이 `HTTP 3xx` 에러로 드러납니다.
 
 ## API
 
