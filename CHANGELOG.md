@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/hs-shell/dotbugi-lms-parser/compare/v0.1.1...v0.1.2) (2026-10-24)
+
+
+### Bug Fixes
+
+* getHref 결과를 LMS 출처로 제한 ([#20](https://github.com/hs-shell/dotbugi-lms-parser/issues/20)) ([f5eb195](https://github.com/hs-shell/dotbugi-lms-parser/commit/f5eb1954aa353732e3872672cde81a7069da09f9))
+
 ## [0.1.1](https://github.com/hs-shell/dotbugi-lms-parser/compare/v0.1.0...v0.1.1) (2026-10-23)
 
 
